@@ -26,7 +26,7 @@ itemRouter.get('/vouchers', function (req, res) {
 
 // GET Voucher
 itemRouter.get('/vouchers/:token_id', function (req, res) {
-    NftVoucherModel.findOne({ _id: req.params.token_id }, function (err, voucher) {
+    NftVoucherModel.findOne({ token_id: req.params.token_id }, function (err, voucher) {
         if (err) return res.status(500).json({ error: err });
         if (!voucher) return res.status(404).json({ error: 'voucher not found' });
         res.json(voucher);
