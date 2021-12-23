@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { ItemService } from './item.service';
 import { CreateItemVoucherDto } from './dto/create-item-voucher.dto';
+// import { AuthGuard } from 'src/auth.guard';
 // import { UpdateItemDto } from './dto/update-item-vocher.dto';
 
+// @UseGuards(AuthGuard)
 @Controller('items')
 export class ItemController {
   constructor(private readonly itemService: ItemService) {}
@@ -22,9 +24,12 @@ export class ItemController {
     return this.itemService.findAllVoucher();
   }
 
-  @Get('vouchers/:token_id')
-  findOneVoucher(@Param('token_id') token_id: string) {
-    return this.itemService.findOneVoucher(+token_id);
+  @Get('vouchers/:token_address/:token_id')
+  findOneVoucher(
+    @Param('token_address') token_address: string,
+    @Param('token_id') token_id: string
+    ) {
+    return this.itemService.findOneVoucher(+token_id, token_address);
   }
 
   // @Patch(':id')

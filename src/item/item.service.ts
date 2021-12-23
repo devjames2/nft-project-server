@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ItemVoucher, ItemVoucherDocument } from './schemas/itemVoucher.schema';
+import { ItemVoucher, ItemVoucherDocument } from './schemas/item-voucher.schema';
 import { CreateItemVoucherDto } from './dto/create-item-voucher.dto';
 // import { UpdateItemDto } from './dto/update-item-vocher.dto';
 import Moralis from 'moralis/node.js';
@@ -11,7 +11,7 @@ import Moralis from 'moralis/node.js';
 export class ItemService {
   constructor(
     @InjectModel(ItemVoucher.name)
-    private readonly itemVoucherModel: Model<ItemVoucherDocument>,
+    private readonly itemVoucherModel: Model<ItemVoucherDocument>
   ) {
     // const Moralis = require(moralis/node); 
 
@@ -36,9 +36,9 @@ export class ItemService {
     return result;
   }
 
-  async findOneVoucher(token_id: number): Promise<ItemVoucher> {
+  async findOneVoucher(token_id: number, token_address: string): Promise<ItemVoucher> {
     // this.ItemVoucherModel.find().exec()
-    const result = await this.itemVoucherModel.findOne({ token_id }).exec();
+    const result = await this.itemVoucherModel.findOne({ token_id, token_address }).exec();
     if (!result) {
       throw new NotFoundException('voucher not found');
     }
