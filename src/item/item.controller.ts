@@ -19,7 +19,7 @@ export class ItemController {
     return this.itemService.findAllMyItem(chain, address);
   }
 
-  @Get('all')
+  @Get('vouchers')
   findAllVoucher() {
     return this.itemService.findAllVoucher();
   }
