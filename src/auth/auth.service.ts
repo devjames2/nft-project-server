@@ -90,11 +90,15 @@ export class AuthService {
     await this.userAuthInfoModel.deleteOne({ accountAddress: accountAddress })
 
     const newUserAuthDto = new UserAuthDto();
-    newUserAuthDto.accountAddress = accountAddress;
+    newUserAuthDto.accountAddress = accountAddress.toLowerCase();
     newUserAuthDto.nonce = Math.floor(Math.random() * 10000000000);
 
-    const newUserAuth = await new this.userAuthInfoModel(newUserAuthDto);;
-    return newUserAuth.save();
+    const newUserAuth = await new this.userAuthInfoModel(newUserAuthDto);
+    await newUserAuth.save();
+
+    // TODO: DB 조회해서 할 필요 있는지 고민 필요
+    const result = await this.userAuthInfoModel.findOne().where('accountAddress').equals(accountAddress.toLowerCase()).select({nonce: 1, _id: 0})
+    return result
 
   }
 
