@@ -11,29 +11,29 @@ export class ItemVoucher
     @Prop()
     symbol: String;
     @Prop()
-    token_address: String;
+    tokenAddress?: String;
     @Prop()
-    token_id: String;
+    tokenId?: String;
     @Prop()
-    token_uri: String;
+    tokenUri: String;
     @Prop()
-    owner_of: String;
+    ownerOf: String;
     @Prop()
     amount: Number;
     @Prop()
-    contract_type: String;
+    contractType: String;
     @Prop()
     metadata: String;
     @Prop()
-    is_valid: Number;
+    isValid: Number;
     @Prop()
     frozen: Number;
     @Prop()
-    min_price: Number;
+    minPrice: Number;
     @Prop()
     signature: String;
     @Prop()
-    creator_address: String;
+    creatorAddress: String;
     @Prop()
     royalty: Number;
     @Prop()

@@ -1,18 +1,18 @@
 export class CreateItemVoucherDto {
     name: String;
     symbol: String;
-    token_address: String;
-    token_id: String;
-    token_uri: String;
-    owner_of: String;
+    tokenAddress: String;
+    tokenId: String;
+    tokenUri: String;
+    ownerOf: String;
     amount: Number;
-    contract_type: String;
+    contractType: String;
     metadata: String;
-    is_valid: Number;
+    isValid: Number;
     frozen: Number;
-    min_price: Number;
+    minPrice: Number;
     signature: String;
-    creator_address: String;
+    creatorAddress: String;
     royalty: Number;
     fee: Number;
 }

@@ -2,6 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { ValidationPipe } from '@nestjs/common';
+import { WinstonModule, utilities as nestWinstonModuleUtilities } from 'nest-winston';
+import winston from 'winston';
 
 dotenv.config({
   path: path.resolve(
@@ -11,9 +14,28 @@ dotenv.config({
 });
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+//     logger: WinstonModule.createLogger({
+//       level: process.env.NODE_ENV === 'production' ? 'info' : 'silly',
+// format: winston.format.combine(
+// winston.format.timestamp(),
+// nestWinstonModuleUtilities.format.nestLike('MyApp', { prettyPrint: true }),
+// ),
+// })
+  });
   // app.use(compression());
-  app.enableCors();
+
+
+  const options = {
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    credentials: true
+  };
+
+  app.enableCors(options);
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env.PORT);
 }
 bootstrap();
