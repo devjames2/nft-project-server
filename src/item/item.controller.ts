@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } f
 import { ItemService } from './item.service';
 import { CreateItemVoucherDto } from './dto/create-item-voucher.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
-// import { UpdateItemDto } from './dto/update-item-vocher.dto';
 
 
 @Controller('items')
@@ -16,7 +15,7 @@ export class ItemController {
   }
 
   @Get('all')
-  findAllMyItem(@Query('chain') chain: string, @Query('address') address: string) {
+  findAllMyItem(@Query('chain') chain: string, @Query('accountAddress') address: string) {
     return this.itemService.findAllMyItem(chain, address);
   }
 

@@ -11,10 +11,8 @@ export class AuthController {
     return this.authService.findUser(publicAddress)
   }
 
-  @Post('login')
+  @Post()
   login(@Body() userAuthDto: UserAuthDto){
-    console.log(userAuthDto)
-
     return this.authService.loginUser(userAuthDto)
   }
 }
