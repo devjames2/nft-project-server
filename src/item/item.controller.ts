@@ -1,14 +1,15 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { ItemService } from './item.service';
 import { CreateItemVoucherDto } from './dto/create-item-voucher.dto';
-// import { AuthGuard } from 'src/auth.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
 // import { UpdateItemDto } from './dto/update-item-vocher.dto';
 
-// @UseGuards(AuthGuard)
+
 @Controller('items')
 export class ItemController {
   constructor(private readonly itemService: ItemService) {}
 
+  @UseGuards(AuthGuard)
   @Post('voucher')
   create(@Body() createItemVoucherDto: CreateItemVoucherDto) {
     return this.itemService.createVoucher(createItemVoucherDto);
@@ -24,12 +25,12 @@ export class ItemController {
     return this.itemService.findAllVoucher();
   }
 
-  @Get('vouchers/:token_address/:token_id')
+  @Get('vouchers/:tokenAddress/:tokenId')
   findOneVoucher(
-    @Param('token_address') token_address: string,
-    @Param('token_id') token_id: string
+    @Param('tokenAddress') tokenAddress: string,
+    @Param('tokenId') tokenId: string
     ) {
-    return this.itemService.findOneVoucher(+token_id, token_address);
+    return this.itemService.findOneVoucher(+tokenId, tokenAddress);
   }
 
   // @Patch(':id')
@@ -37,8 +38,9 @@ export class ItemController {
   //   return this.itemService.update(+id, updateItemDto);
   // }
 
-  @Delete('vouchers:token_id')
-  remove(@Param('token_id') token_id: string) {
-    return this.itemService.remove(+token_id);
+  @UseGuards(AuthGuard)
+  @Delete('vouchers:tokenId')
+  remove(@Param('tokenId') tokenId: string) {
+    return this.itemService.remove(+tokenId);
   }
 }

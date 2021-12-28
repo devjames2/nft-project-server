@@ -36,9 +36,9 @@ export class ItemService {
     return result;
   }
 
-  async findOneVoucher(token_id: number, token_address: string): Promise<ItemVoucher> {
+  async findOneVoucher(tokenId: number, tokenAddress: string): Promise<ItemVoucher> {
     // this.ItemVoucherModel.find().exec()
-    const result = await this.itemVoucherModel.findOne({ token_id, token_address }).exec();
+    const result = await this.itemVoucherModel.findOne({ tokenId, tokenAddress }).exec();
     if (!result) {
       throw new NotFoundException('voucher not found');
     }
@@ -74,8 +74,8 @@ export class ItemService {
   //   return `This action updates a #${id} item`;
   // }
 
-  async remove(token_id: number): Promise<String> {
-    await this.itemVoucherModel.deleteOne({ token_id }).exec();
-    return `This action removes a #${token_id} item`;
+  async remove(tokenId: number): Promise<String> {
+    await this.itemVoucherModel.deleteOne({ tokenId }).exec();
+    return `This action removes a #${tokenId} item`;
   }
 }
