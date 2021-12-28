@@ -40,14 +40,14 @@ export class AuthService {
     // Step 2: Verify digital signature
     ////////////////////////////////////////////////////
     const msg = `I am signing my one-time nonce: ${userAuthInfo.nonce}`;
-    let recovered_address;
+    let recoveredAddress;
     try {
       const msgBufferHex = bufferToHex(Buffer.from(msg, 'utf8'));
-      recovered_address = recoverPersonalSignature({
+      recoveredAddress = recoverPersonalSignature({
         data: msgBufferHex,
         sig: signature,
       });
-      console.log(`Step 2: ${recovered_address}`)
+      console.log(`Step 2: ${recoveredAddress}`)
     } catch (err) {
       console.error(err)
       throw new HttpException('Problem with signature verification.', 403);
@@ -55,7 +55,7 @@ export class AuthService {
 
     // The signature verification is successful if the address found with
     // sigUtil.recoverPersonalSignature matches the initial accountAddress
-    if (recovered_address.toLowerCase() !== accountAddress.toLowerCase()) {
+    if (recoveredAddress.toLowerCase() !== accountAddress.toLowerCase()) {
       throw new HttpException('Signature verification failed', 401);
     }
 
@@ -76,27 +76,22 @@ export class AuthService {
     const payload: JwtUser = {
       accountAddress: accountAddress
     };
-    let access_token: String;
+    let accessToken: String;
     try {
-      access_token = this.jwtService.sign(payload);
+      accessToken = this.jwtService.sign(payload);
     } catch (err) {
       throw new HttpException('Creating JWT failed', 401);
     }
 
-    return JSON.stringify({ access_token });
+    return JSON.stringify({ accessToken: accessToken });
   }
 
-  // private async createUserAuthInfo(loginDto:LoginDto | UserAuthInfo) : Promise<UserAuthInfo> {
   private async createUserAuthInfo(accountAddress: string): Promise<UserAuthInfo> {
-    // const nonce = Math.floor(Math.random() * 1000000000);
     await this.userAuthInfoModel.deleteOne({ accountAddress: accountAddress })
 
     const newUserAuthDto = new UserAuthDto();
     newUserAuthDto.accountAddress = accountAddress;
     newUserAuthDto.nonce = Math.floor(Math.random() * 10000000000);
-
-
-    // const newUserAuthInfo = new UserAuthDto(accountAddress, nonce);
 
     const newUserAuth = await new this.userAuthInfoModel(newUserAuthDto);;
     return newUserAuth.save();
@@ -104,7 +99,7 @@ export class AuthService {
   }
 
   async findUser(accountAddress: string): Promise<UserAuthInfo> {
-    const result = await this.userAuthInfoModel.findOne({ accountAddress }).exec();
+    const result = await this.userAuthInfoModel.findOne().where('accountAddress').equals(accountAddress.toLowerCase()).select({nonce: 1, _id: 0})
     if (!result) {
       return this.createUserAuthInfo(accountAddress);
     }
