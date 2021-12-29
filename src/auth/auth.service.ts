@@ -27,7 +27,7 @@ export class AuthService {
     ////////////////////////////////////////////////////
     // Step 1: Get the user with the given accountAddress
     ////////////////////////////////////////////////////
-    let userNonce
+    let userNonce:Number
     try {
       const userNonceJson = await this.userAuthInfoModel.findOne().where('accountAddress').equals(accountAddress.toLowerCase()).select({nonce: 1, _id:0});
       userNonce = userNonceJson['nonce'];
