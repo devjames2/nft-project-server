@@ -27,19 +27,19 @@ export class AuthService {
     ////////////////////////////////////////////////////
     // Step 1: Get the user with the given accountAddress
     ////////////////////////////////////////////////////
-    let userAuthInfo: UserAuthInfo
+    let userNonce:Number
     try {
-      userAuthInfo = await this.userAuthInfoModel.findOne({ where: { accountAddress: accountAddress } });
+      const userNonceJson = await this.userAuthInfoModel.findOne().where('accountAddress').equals(accountAddress.toLowerCase()).select({nonce: 1, _id:0});
+      userNonce = userNonceJson['nonce'];
     } catch (err) {
+      console.log(err)
       throw new HttpException('Problem with getting user auth info.', 403);
     }
-
-    // console.log(`Step 1: ${userAuthInfo}`)
 
     ////////////////////////////////////////////////////
     // Step 2: Verify digital signature
     ////////////////////////////////////////////////////
-    const msg = `I am signing my one-time nonce: ${userAuthInfo.nonce}`;
+    const msg = `I am signing my one-time nonce: ${userNonce}`;
     let recoveredAddress;
     try {
       const msgBufferHex = bufferToHex(Buffer.from(msg, 'utf8'));
@@ -47,7 +47,7 @@ export class AuthService {
         data: msgBufferHex,
         sig: signature,
       });
-      console.log(`Step 2: ${recoveredAddress}`)
+      // console.log(`Step 2: ${recoveredAddress}`)
     } catch (err) {
       console.error(err)
       throw new HttpException('Problem with signature verification.', 403);
@@ -65,6 +65,7 @@ export class AuthService {
     try {
       this.createUserAuthInfo(accountAddress);
     } catch (err) {
+      console.log(err)
       throw new HttpException('Generating a new nonce for the user failed', 401);
     }
 
@@ -80,6 +81,7 @@ export class AuthService {
     try {
       accessToken = this.jwtService.sign(payload);
     } catch (err) {
+      console.log(err)
       throw new HttpException('Creating JWT failed', 401);
     }
 
