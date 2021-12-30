@@ -2,22 +2,26 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ItemVoucher, ItemVoucherDocument } from './schemas/item-voucher.schema';
+import { ItemMarket, ItemMarketDocument } from './schemas/item-market.schema';
 import { CreateItemVoucherDto } from './dto/create-item-voucher.dto';
 // import { UpdateItemDto } from './dto/update-item-vocher.dto';
 import Moralis from 'moralis/node.js';
+import { SellFixedPriceItemDto } from './dto/sell-fixed-price-item.dto';
+// import { BuyNowItemDto } from './dto/buy-now-item.dto';
 
 
 @Injectable()
 export class ItemService {
   constructor(
     @InjectModel(ItemVoucher.name)
-    private readonly itemVoucherModel: Model<ItemVoucherDocument>
+    private readonly itemVoucherModel: Model<ItemVoucherDocument>,
+    @InjectModel(ItemMarket.name)
+    private readonly itemMarketrModel: Model<ItemMarketDocument>
   ) {
     // const Moralis = require(moralis/node); 
 
     const serverUrl = process.env.MORALIS_SERVER;
     const appId = process.env.MORALIS_APP_ID;
-    console.log(appId);
     Moralis.start({ serverUrl, appId });
   }
 
@@ -29,16 +33,18 @@ export class ItemService {
   }
 
   async findAllVoucher(): Promise<ItemVoucher[]> {
-    const result = await this.itemVoucherModel.find().exec();
+    const result = await this.itemVoucherModel.find().select({_id: 0, __v: 0});
     if (!result) {
       throw new NotFoundException('vouchers not found');
     }
     return result;
   }
 
-  async findOneVoucher(tokenId: number, tokenAddress: string): Promise<ItemVoucher> {
-    // this.ItemVoucherModel.find().exec()
-    const result = await this.itemVoucherModel.findOne({ tokenId, tokenAddress }).exec();
+  async findOneVoucher(tokenAddress: string, tokenId: number): Promise<ItemVoucher> {
+    const result = await this.itemVoucherModel.findOne()
+                                              .where('tokenAddress').equals(tokenAddress)
+                                              .where('tokenId').equals(tokenId)
+                                              .select({_id: 0, __v: 0});
     if (!result) {
       throw new NotFoundException('voucher not found');
     }
@@ -47,7 +53,7 @@ export class ItemService {
 
   // TODO: define return type
   async findAllMyItem(chain: string, address: string) {
-    const lazyMintedItems = await this.itemVoucherModel.find().exec();
+    const lazyMintedItems = await this.itemVoucherModel.find().select({_id: 0, __v: 0});
 
     // console.log(lazyMintedItems)
 
@@ -78,4 +84,24 @@ export class ItemService {
     await this.itemVoucherModel.deleteOne({ tokenId }).exec();
     return `This action removes a #${tokenId} item`;
   }
+
+  async sellFixedPriceItem(sellFixedPriceItemDto: SellFixedPriceItemDto): Promise<ItemMarket> {
+
+    const newSellFixedPriceItem = await new this.itemMarketrModel(sellFixedPriceItemDto);
+    return newSellFixedPriceItem.save();
+  }
+
+  async findAllSellItem(): Promise<ItemMarket[]> {
+    const result = await this.itemMarketrModel.find().select({_id: 0, __v: 0});
+    if (!result) {
+      throw new NotFoundException('item for sale not found');
+    }
+    return result;
+  }
+
+  // async buyNowItem(buyNowItem: BuyNowItemDto): Promise<BuyNowItemDto> {
+  //   // await this.itemVoucherModel.deleteOne({ tokenId }).exec();
+  //   // return `This action removes a #${tokenId} item`;
+  //   return new BuyNowItemDto();
+  // }
 }
