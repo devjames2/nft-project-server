@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } f
 import { ItemService } from './item.service';
 import { CreateItemVoucherDto } from './dto/create-item-voucher.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { SellFixedPriceItemDto } from './dto/sell-fixed-price-item.dto';
+// import { BuyNowItemDto } from './dto/buy-now-item.dto';
 
 
 @Controller('items')
@@ -13,6 +15,23 @@ export class ItemController {
   create(@Body() createItemVoucherDto: CreateItemVoucherDto) {
     return this.itemService.createVoucher(createItemVoucherDto);
   }
+
+  @UseGuards(AuthGuard)
+  @Post('sell')
+  sell(@Body() sellFixedPriceItemDto: SellFixedPriceItemDto) {
+    return this.itemService.sellFixedPriceItem(sellFixedPriceItemDto);
+  }
+  
+  @Get('sell')
+  findAllSellItem() {
+    return this.itemService.findAllSellItem();
+  }
+
+  // @UseGuards(AuthGuard)
+  // @Post('buy')
+  // buyNow(@Body() buyItemVoucherDto: BuyNowItemDto) {
+  //   return this.itemService.buyNowItem(buyItemVoucherDto);
+  // }
 
   @Get('all')
   findAllMyItem(@Query('chain') chain: string, @Query('accountAddress') address: string) {
@@ -29,7 +48,7 @@ export class ItemController {
     @Param('tokenAddress') tokenAddress: string,
     @Param('tokenId') tokenId: string
     ) {
-    return this.itemService.findOneVoucher(+tokenId, tokenAddress);
+    return this.itemService.findOneVoucher(tokenAddress, +tokenId);
   }
 
   // @Patch(':id')
@@ -38,7 +57,7 @@ export class ItemController {
   // }
 
   @UseGuards(AuthGuard)
-  @Delete('vouchers:tokenId')
+  @Delete('vouchers/:tokenId')
   remove(@Param('tokenId') tokenId: string) {
     return this.itemService.remove(+tokenId);
   }

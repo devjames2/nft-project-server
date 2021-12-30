@@ -89,7 +89,8 @@ export class AuthService {
   }
 
   private async createUserAuthInfo(accountAddress: string): Promise<UserAuthInfo> {
-    await this.userAuthInfoModel.deleteOne({ accountAddress: accountAddress })
+    // await this.userAuthInfoModel.deleteOne({ accountAddress: accountAddress })
+    await this.userAuthInfoModel.deleteOne().where('accountAddress').equals(accountAddress.toLowerCase())
 
     const newUserAuthDto = new UserAuthDto();
     newUserAuthDto.accountAddress = accountAddress.toLowerCase();
