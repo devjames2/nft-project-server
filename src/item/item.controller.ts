@@ -27,6 +27,11 @@ export class ItemController {
     return this.itemService.findAllSellItem();
   }
 
+  @Get('sell/:_id')
+  findOneSellItem(@Param('_id') _id: string) {
+    return this.itemService.findOneSellItem(_id);
+  }
+
   // @UseGuards(AuthGuard)
   // @Post('buy')
   // buyNow(@Body() buyItemVoucherDto: BuyNowItemDto) {

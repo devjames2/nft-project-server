@@ -33,7 +33,7 @@ export class ItemService {
   }
 
   async findAllVoucher(): Promise<ItemVoucher[]> {
-    const result = await this.itemVoucherModel.find().select({_id: 0, __v: 0});
+    const result = await this.itemVoucherModel.find().select({__v: 0});
     if (!result) {
       throw new NotFoundException('vouchers not found');
     }
@@ -44,7 +44,7 @@ export class ItemService {
     const result = await this.itemVoucherModel.findOne()
                                               .where('tokenAddress').equals(tokenAddress)
                                               .where('tokenId').equals(tokenId)
-                                              .select({_id: 0, __v: 0});
+                                              .select({__v: 0});
     if (!result) {
       throw new NotFoundException('voucher not found');
     }
@@ -53,7 +53,7 @@ export class ItemService {
 
   // TODO: define return type
   async findAllMyItem(chain: string, address: string) {
-    const lazyMintedItems = await this.itemVoucherModel.find().select({_id: 0, __v: 0});
+    const lazyMintedItems = await this.itemVoucherModel.find().select({__v: 0});
 
     // console.log(lazyMintedItems)
 
@@ -92,9 +92,21 @@ export class ItemService {
   }
 
   async findAllSellItem(): Promise<ItemMarket[]> {
-    const result = await this.itemMarketrModel.find().select({_id: 0, __v: 0});
+    const result = await this.itemMarketrModel.find().select({__v: 0});
     if (!result) {
-      throw new NotFoundException('item for sale not found');
+      throw new NotFoundException('item for sell not found');
+    }
+    return result;
+  }
+
+  // async findOneSellItem(tokenAddress: string, tokenId: number): Promise<ItemVoucher> {
+  async findOneSellItem(_id: string): Promise<ItemMarket> {
+    const result = await this.itemMarketrModel.findOne()
+                                              // .where('tokenAddress').equals(tokenAddress)
+                                              // .where('tokenId').equals(tokenId)
+                                              .select({__v: 0});
+    if (!result) {
+      throw new NotFoundException('item for sell not found');
     }
     return result;
   }
