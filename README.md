@@ -1,6 +1,33 @@
 
-## Installation
-Azure 가상머신 내 환경설정
+# Run for local test with Docker
+
+## pre-requisite
+```
+docker, docker-compose
+```
+
+.dev.env 파일에 아래 정보 추가 필요. 내용은 influence/slack에 공유
+```
+MONGO_URL = ""
+PORT = 
+MORALIS_SERVER = ""
+MORALIS_APP_ID = ""
+JWT_SECRET = ""
+```
+
+## Running the app with docker-compose
+```
+## docker build
+$ docker build -t nft-project-server:{tag} .
+
+## tag명에 맞춰 docker-compose.yml 수정 && mongodb 저장 위치 수정
+
+## docker-compose 실행
+$ docker-compose up
+```
+
+---
+# Setting for dev
 
 ```
 ## install nodejs v12.18.4
@@ -11,15 +38,6 @@ nvm install v12.18.4
 cd nft-project-server
 npm install
 ```
-
-root에 .env 생성 후 아래 정보 추가 필요. 실제 내용은 influence에 공유
-```
-MONGO_URL = ""
-PORT = 
-MORALIS_SERVER = ""
-MORALIS_APP_ID = ""
-```
-
 ## Running the app
 
 ```bash
