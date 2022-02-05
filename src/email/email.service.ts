@@ -8,9 +8,9 @@ import { EmailSubscriberDocument } from './schemas/email-subscriber.schema';
 @Injectable()
 export class EmailService {
   constructor(
-    @InjectModel('EmailSubscriber') 
+    @InjectModel('EmailSubscriber')
     private readonly emailSubscriberModel: PaginateModel<EmailSubscriberDocument>
-  ) {}
+  ) { }
 
   async create(createEmailDto: CreateEmailSubscriberDto) {
     // insert data into mongodb with mongoose
@@ -24,7 +24,8 @@ export class EmailService {
   }
 
   private async checkSubscriberExists(emailAddress: string): Promise<boolean> {
-    const subscriber = await this.emailSubscriberModel.findOne({ emailAddress });
+    const subscriber = await this.emailSubscriberModel.findOne({ emailAddress })
+                                                      .select({ __v: 0 });;
     if (subscriber) {
       return true;
     }
@@ -48,13 +49,13 @@ export class EmailService {
     return this.emailSubscriberModel.updateOne(
       { emailAddress: updateEmailDto.emailAddress },
       updateEmailDto
-    );
+    ).select({__v: 0});
   }
 
   remove(createEmailDto: CreateEmailSubscriberDto) {
     // delete data into mongodb with mongoose
     return this.emailSubscriberModel.deleteOne(
       { emailAddress: createEmailDto.emailAddress }
-      );
+    ).select({__v: 0});
   }
 }
