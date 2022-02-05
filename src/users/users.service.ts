@@ -51,11 +51,13 @@ export class UsersService {
       );
     }
   
-    remove(createUsersDto: CreateUsersDto) {
+    async remove(accountAddress: string) {
       // delete data into mongodb with mongoose
-      return this.usersModel.deleteOne(
-        { accountAddress: createUsersDto.accountAddress }
-        );
-    }
+      await this.usersModel.findOneAndDelete(
+        { accountAddress }
+        ).exec();
+
+        return `removes a ${accountAddress} user`;
+      }
 }
 

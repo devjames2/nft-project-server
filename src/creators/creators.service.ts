@@ -61,12 +61,12 @@ export class CreatorsService {
       );
     }
   
-    async remove(createCreatorsDto: CreateCreatorDto) {
+    async remove(accountAddress: string) {
       // delete data into mongodb with mongoose
-      await this.creatorsModel.deleteOne(
-        { accountAddress: createCreatorsDto.accountAddress }
+      await this.creatorsModel.findOneAndDelete(
+        { accountAddress }
         ).exec();
 
-        return `removes a #${createCreatorsDto.accountAddress} user`;
+        return `removes a ${accountAddress} user`;
       }
 }

@@ -27,8 +27,8 @@ export class CreatorsController {
     return this.creatorsService.update(updateCreatorDto);
   }
 
-  @Delete()
-  remove(@Body() createCreatorDto: CreateCreatorDto) {
-    return this.creatorsService.remove(createCreatorDto);
+  @Delete(':accountAddress')
+  remove(@Param('accountAddress') accountAddress: string) {
+    return this.creatorsService.remove(accountAddress);
   }
 }

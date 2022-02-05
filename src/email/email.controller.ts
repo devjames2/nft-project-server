@@ -22,8 +22,8 @@ export class EmailController {
     return this.emailService.update(updateEmailDto);
   }
 
-  @Delete()
-  remove(@Body() createEmailDto: CreateEmailSubscriberDto) {
-    return this.emailService.remove(createEmailDto);
+  @Delete(':emailAddress')
+  remove(@Param('emailAddress') emailAddress: string) {
+    return this.emailService.remove(emailAddress);
   }
 }
