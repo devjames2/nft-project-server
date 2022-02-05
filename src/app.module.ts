@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ItemModule } from './item/item.module';
@@ -6,9 +6,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { AuthModule } from './auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { AuthService } from './auth/auth.service';
+import { UserModule } from './user/user.module';
+import { ExceptionModule } from './exception/exception.module';
+import { HttpExceptionFilter } from './exception/http-exception.filter';
 
 dotenv.config({
   path: path.resolve(
@@ -20,8 +23,9 @@ dotenv.config({
 @Module({
   imports: [MongooseModule.forRoot(process.env.MONGO_URL),
     ItemModule,
-    // UserModule,
-    AuthModule],
+    UserModule,
+    AuthModule,
+    ExceptionModule],
   controllers: [AppController],
   providers: [AppService],
   exports: []
