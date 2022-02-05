@@ -9,9 +9,10 @@ import { AuthModule } from './auth/auth.module';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { AuthService } from './auth/auth.service';
-import { UserModule } from './user/user.module';
+import { UsersModule } from './users/users.module';
 import { ExceptionModule } from './exception/exception.module';
 import { HttpExceptionFilter } from './exception/http-exception.filter';
+import { CreatorsModule } from './creators/creators.module';
 
 dotenv.config({
   path: path.resolve(
@@ -21,11 +22,13 @@ dotenv.config({
 });
 
 @Module({
-  imports: [MongooseModule.forRoot(process.env.MONGO_URL),
+  imports: [MongooseModule.forRoot(process.env.MONGO_URL,{
+    dbName: 'label'}),
     ItemModule,
-    UserModule,
+    UsersModule,
     AuthModule,
-    ExceptionModule],
+    ExceptionModule,
+    CreatorsModule],
   controllers: [AppController],
   providers: [AppService],
   exports: []

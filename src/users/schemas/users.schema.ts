@@ -2,21 +2,21 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import { Document } from 'mongoose';
 
-export type EmailSubscriberDocument = EmailSubscriber & Document;
+export type UsersDocument = Users & Document;
 
 @Schema()
-export class EmailSubscriber 
+export class Users
   {
     @Prop()
-    emailAddress: String;
+    accountAddress: String;
     
     @Prop()
-    status: Boolean;
+    nickName: string;
 
     @Prop()
     createdAt: Date;
   }
 
-const schema = SchemaFactory.createForClass(EmailSubscriber);
+const schema = SchemaFactory.createForClass(Users);
 schema.plugin(mongoosePaginate);
-export const EmailSubscriberSchema = schema;
+export const UsersSchema = schema;

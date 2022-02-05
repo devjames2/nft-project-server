@@ -6,6 +6,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { WinstonModule, utilities as nestWinstonModuleUtilities, WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import * as winston from 'winston';
 import { HttpExceptionFilter } from './exception/http-exception.filter';
+import express from 'express';
 
 dotenv.config({
   path: path.resolve(
@@ -44,6 +45,10 @@ const app = await NestFactory.create(AppModule, {
   app.useGlobalPipes(new ValidationPipe({
     transform: true
   }));
+  // app.use(express.static(join(process.cwd(), '../client/dist/')));
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
   // app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   app.useGlobalFilters(new HttpExceptionFilter()); 
   await app.listen(process.env.PORT);
