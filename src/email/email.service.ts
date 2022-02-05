@@ -52,10 +52,12 @@ export class EmailService {
     ).select({__v: 0});
   }
 
-  remove(createEmailDto: CreateEmailSubscriberDto) {
+  async remove(emailAddress: string) {
     // delete data into mongodb with mongoose
-    return this.emailSubscriberModel.deleteOne(
-      { emailAddress: createEmailDto.emailAddress }
-    ).select({__v: 0});
-  }
+    await this.emailSubscriberModel.findOneAndDelete(
+      { emailAddress: emailAddress }
+      ).exec();
+
+      return `removes a ${emailAddress} user`;
+    }
 }

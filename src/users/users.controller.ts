@@ -23,9 +23,9 @@ export class UsersController {
     return this.usersService.update(updateUsersDto);
   }
 
-  @Delete()
-  remove(@Body() createUsersDto: CreateUsersDto) {
-    return this.usersService.remove(createUsersDto);
+  @Delete(':accountAddress')
+  remove(@Param('accountAddress') accountAddress: string) {
+    return this.usersService.remove(accountAddress);
   }
 
 
