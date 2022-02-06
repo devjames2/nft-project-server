@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PaginateModel } from 'mongoose';
 import { CreateEmailSubscriberDto } from './dto/create-email-subscriber.dto';
@@ -47,17 +47,21 @@ export class EmailService {
   update(updateEmailDto: UpdateEmailDto) {
     // update data into mongodb with mongoose
     return this.emailSubscriberModel.updateOne(
-      { emailAddress: updateEmailDto.emailAddress },
+      { _id: updateEmailDto._id },
       updateEmailDto
     ).select({__v: 0});
   }
 
-  async remove(emailAddress: string) {
+  async remove(_id: string) {
     // delete data into mongodb with mongoose
-    await this.emailSubscriberModel.findOneAndDelete(
-      { emailAddress: emailAddress }
-      ).exec();
+    const result = await this.emailSubscriberModel.findByIdAndDelete(
+      { _id }
+    ).exec();
 
-      return `removes a ${emailAddress} user`;
+    if (!result) {
+      throw new NotFoundException('drop not found');
+    }
+
+      return `removes a ${_id} user`;
     }
 }
