@@ -13,6 +13,7 @@ import { UsersModule } from './users/users.module';
 import { ExceptionModule } from './exception/exception.module';
 import { HttpExceptionFilter } from './exception/http-exception.filter';
 import { CreatorsModule } from './creators/creators.module';
+import { DropsModule } from './drops/drops.module';
 
 dotenv.config({
   path: path.resolve(
@@ -28,7 +29,8 @@ dotenv.config({
     UsersModule,
     AuthModule,
     ExceptionModule,
-    CreatorsModule],
+    CreatorsModule,
+    DropsModule],
   controllers: [AppController],
   providers: [AppService],
   exports: []

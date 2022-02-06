@@ -17,9 +17,9 @@ export class CreatorsController {
     return this.creatorsService.findAll();
   }
 
-  @Get(':accountAddress')
-  findOne(@Param('accountAddress') accountAddress: string) {
-    return this.creatorsService.findOne(accountAddress);
+  @Get(':_id')
+  findOne(@Param('_id') _id: string) {
+    return this.creatorsService.findOne(_id);
   }
 
   @Patch()
@@ -27,8 +27,8 @@ export class CreatorsController {
     return this.creatorsService.update(updateCreatorDto);
   }
 
-  @Delete(':accountAddress')
-  remove(@Param('accountAddress') accountAddress: string) {
-    return this.creatorsService.remove(accountAddress);
+  @Delete(':_id')
+  remove(@Param('_id') _id: string) {
+    return this.creatorsService.remove(_id);
   }
 }

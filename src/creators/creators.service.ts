@@ -44,11 +44,11 @@ export class CreatorsService {
       );
     }
 
-  async findOne(accountAddress: string) {
-    const result = await this.creatorsModel.findOne({ accountAddress })
+  async findOne(_id: string) {
+    const result = await this.creatorsModel.findOne({ _id })
       .select({ __v: 0 });
     if (!result) {
-      throw new NotFoundException('item for sell not found');
+      throw new NotFoundException('creator not found');
     }
     return result;
   }
@@ -56,17 +56,21 @@ export class CreatorsService {
     update(updateCreatorsDto: UpdateCreatorDto) {
       // update data into mongodb with mongoose
       return this.creatorsModel.updateOne(
-        { accountAddress: updateCreatorsDto.accountAddress },
+        { _id: updateCreatorsDto._id },
         updateCreatorsDto
       );
     }
   
-    async remove(accountAddress: string) {
+    async remove(_id: string) {
       // delete data into mongodb with mongoose
-      await this.creatorsModel.findOneAndDelete(
-        { accountAddress }
-        ).exec();
+      const result = await this.creatorsModel.findByIdAndDelete(
+        { _id }
+      ).exec();
+  
+      if (!result) {
+        throw new NotFoundException('drop not found');
+      }
 
-        return `removes a ${accountAddress} user`;
+        return `removes a ${_id} user`;
       }
 }

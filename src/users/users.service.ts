@@ -46,18 +46,22 @@ export class UsersService {
     update(updateUsersDto: UpdateUsersDto) {
       // update data into mongodb with mongoose
       return this.usersModel.updateOne(
-        { accountAddress: updateUsersDto.accountAddress },
+        { _id: updateUsersDto._id },
         updateUsersDto
       );
     }
   
-    async remove(accountAddress: string) {
+    async remove(_id: string) {
       // delete data into mongodb with mongoose
-      await this.usersModel.findOneAndDelete(
-        { accountAddress }
-        ).exec();
+      const result = await this.usersModel.findByIdAndDelete(
+        { _id }
+      ).exec();
+  
+      if (!result) {
+        throw new NotFoundException('drop not found');
+      }
 
-        return `removes a ${accountAddress} user`;
+        return `removes a ${_id} user`;
       }
 }
 
