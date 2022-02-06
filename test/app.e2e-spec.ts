@@ -41,7 +41,8 @@ describe('AppController (e2e)', () => {
   describe('Auth Test', () => {
     it('should return 200 when /auth?accountAddress=test (GET) called', () => {
       // Given
-      const URL = '/auth?accountAddress=test';
+      const accountAddress = '0x264D6BF791f6Be6F001A95e895AE0a904732d473';
+      const URL = `/auth?accountAddress=${accountAddress}`;
 
       // When
       return request
@@ -97,5 +98,19 @@ describe('AppController (e2e)', () => {
 
     //   done();
     // });
+  });
+
+  describe('Creators Test', () => {
+    it.todo('should return 201 /creators (POST) called');
+    it.todo(
+      'should return 422 /creators (POST) called when creator already exists',
+    );
+    it.todo('should return 200 /creators (GET) called');
+    it.todo(
+      'should return 401 /creators (GET) called when the request is wrong',
+    );
+    it.todo('should return 200 /creator/:accountAddress (GET) called');
+    it.todo('should return 200 /creator (PATCH) called');
+    it.todo('should return 200 /creator/:accountAddress (DELETE) called');
   });
 });
