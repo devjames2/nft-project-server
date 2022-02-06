@@ -1,3 +1,4 @@
+import { Connection } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -7,9 +8,11 @@ import { HttpExceptionFilter } from './exception/http-exception.filter';
 import express from 'express';
 import { personalSign } from 'eth-sig-util';
 import { bufferToHex } from 'ethereumjs-util';
+import { DatabaseService } from './../src/database/database.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  let dbConnection: Connection;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -38,6 +41,21 @@ describe('AppController (e2e)', () => {
     // app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
     app.useGlobalFilters(new HttpExceptionFilter());
     await app.init();
+    dbConnection = moduleFixture
+      .get<DatabaseService>(DatabaseService)
+      .getDbHandle();
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  beforeAll(async () => {
+    try {
+      await dbConnection.collection('creators').drop();
+    } catch (error) {
+      //console.log(error);
+    }
   });
 
   describe('Auth Test', () => {
@@ -207,6 +225,10 @@ describe('AppController (e2e)', () => {
   });
 
   describe('Creators Test', () => {
+    // afterEach(async () => {
+    //   await dbConnection.collection('creators').deleteMany({});
+    // });
+
     it('(NFT-130) should return 201 /creators (POST) called', async () => {
       // Given
       const URL = '/creators';
@@ -233,6 +255,10 @@ describe('AppController (e2e)', () => {
           expect(res.body.accountAddress).toEqual(
             createCreatorDto.accountAddress,
           );
+          return request
+            .default(app.getHttpServer())
+            .delete(`${URL}/${res.body._id}`)
+            .expect(200);
         });
     });
 
@@ -278,7 +304,30 @@ describe('AppController (e2e)', () => {
         });
     });
 
-    it.todo('should return 200 /creators (GET) called');
+    it('should return 200 /creators (GET) called', async () => {
+      // Given
+      const URL = '/creators';
+      const page = 0;
+      const limit = 10;
+
+      // When
+      await request
+        .default(app.getHttpServer())
+        .get(`${URL}?page=${page}&limit=${limit}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveProperty('docs');
+          expect(res.body).toHaveProperty('totalDocs');
+          expect(res.body).toHaveProperty('limit');
+          expect(res.body).toHaveProperty('totalPages');
+          expect(res.body).toHaveProperty('page');
+          expect(res.body).toHaveProperty('pagingCounter');
+          expect(res.body).toHaveProperty('hasPrevPage');
+          expect(res.body).toHaveProperty('hasNextPage');
+          expect(res.body).toHaveProperty('prevPage');
+          expect(res.body).toHaveProperty('nextPage');
+        });
+    });
     it.todo(
       'should return 401 /creators (GET) called when the request is wrong',
     );

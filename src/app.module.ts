@@ -1,3 +1,4 @@
+import { DatabaseModule } from './database/database.module';
 import { Logger, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -14,25 +15,36 @@ import { ExceptionModule } from './exception/exception.module';
 import { HttpExceptionFilter } from './exception/http-exception.filter';
 import { CreatorsModule } from './creators/creators.module';
 import { DropsModule } from './drops/drops.module';
+import { ConfigModule } from '@nestjs/config';
 
 dotenv.config({
   path: path.resolve(
-    (process.env.NODE_ENV === 'prod') ? '.prod.env'
-      : (process.env.NODE_ENV === 'stage') ? '.stage.env' : '.dev.env'
-  )
+    process.env.NODE_ENV === 'prod'
+      ? '.prod.env'
+      : process.env.NODE_ENV === 'stage'
+      ? '.stage.env'
+      : '.dev.env',
+  ),
 });
 
 @Module({
-  imports: [MongooseModule.forRoot(process.env.MONGO_URL,{
-    dbName: 'label'}),
+  imports: [
+    // MongooseModule.forRoot(process.env.MONGO_URL, {
+    //   dbName: 'label',
+    // }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    DatabaseModule,
     ItemModule,
     UsersModule,
     AuthModule,
     ExceptionModule,
     CreatorsModule,
-    DropsModule],
+    DropsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
-  exports: []
+  exports: [],
 })
 export class AppModule {}

@@ -9,14 +9,14 @@ import { JwtModule } from '@nestjs/jwt';
   imports: [
     JwtModule.register({
       // secret: process.env.JWT_SECRET,
-      secret: "secret",
+      secret: 'secret',
       signOptions: { expiresIn: '30d' },
-    }), 
+    }),
     MongooseModule.forFeature([
-      { name: Creators.name, schema: CreatorsSchema }
-    ])
+      { name: Creators.name, schema: CreatorsSchema },
+    ]),
   ],
   controllers: [CreatorsController],
-  providers: [CreatorsService]
+  providers: [CreatorsService],
 })
 export class CreatorsModule {}
