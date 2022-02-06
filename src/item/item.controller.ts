@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { ItemService } from './item.service';
 import { CreateItemVoucherDto } from './dto/create-item-voucher.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { SellFixedPriceItemDto } from './dto/sell-fixed-price-item.dto';
 // import { BuyNowItemDto } from './dto/buy-now-item.dto';
 
