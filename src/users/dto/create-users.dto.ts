@@ -1,10 +1,10 @@
-import { IsString, IsNotEmpty, Length, IsOptional, IsDate } from 'class-validator';
+import { IsString, IsNotEmpty, Length, IsOptional, IsDate, IsEthereumAddress } from 'class-validator';
 import { uniqueNamesGenerator, adjectives, colors, animals, NumberDictionary } from 'unique-names-generator';
 
 
 export class CreateUsersDto {
   @IsNotEmpty()
-  @IsString()
+  @IsEthereumAddress()
   @Length(42, 42)
   accountAddress: string;
 

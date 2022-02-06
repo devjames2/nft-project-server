@@ -1,42 +1,44 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import { Document } from 'mongoose';
+import { DropSalesType } from '../dto/create-drop.dto';
+import { DropNFTDto } from '../dto/drop-nft.dto';
 
-export type CreatorsDocument = Creators & Document;
+export type DropsDocument = Drops & Document;
 
 @Schema()
-export class Creators
+export class Drops
   {
     @Prop()
-    accountAddress: string;
-    @Prop()
-    nickName: string;
+    dropName: string;
     @Prop()
     status: string;
+    @Prop()
+    dropSalesType: DropSalesType;
     @Prop()
     shortDescription: string;
     @Prop()
     longDescription: string;
     @Prop()
-    profileThumbnail: string;
-    @Prop()
-    backwallThumbnail: string;
+    mainThumbnail: string;
     @Prop()
     mainBannerThumbnailPC: string;
     @Prop()
     mainBannerThumbnailMobile: string;
     @Prop()
-    instagram: string;
+    dropNFTs: DropNFTDto[];
     @Prop()
-    twitter: string;
+    creators: string[];
     @Prop()
-    tiktok: string;
+    dropStartDate: Date;
     @Prop()
-    homepage: string;
+    dropEndDate: Date;
+    @Prop()
+    timezone: string;
     @Prop()
     createdAt: Date;
   }
 
-const schema = SchemaFactory.createForClass(Creators);
+const schema = SchemaFactory.createForClass(Drops);
 schema.plugin(mongoosePaginate);
-export const CreatorsSchema = schema;
+export const DropsSchema = schema;

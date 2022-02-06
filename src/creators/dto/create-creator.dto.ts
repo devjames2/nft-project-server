@@ -1,16 +1,16 @@
-import { IsString, IsNotEmpty, Length, IsOptional, IsDate, IsBase64, IsUrl, IsEnum } from 'class-validator';
+import { IsString, IsNotEmpty, Length, IsOptional, IsDate, IsBase64, IsUrl, IsEnum, IsEthereumAddress } from 'class-validator';
 
 export enum CreatorStatus {
-    HIDE,
-    DROPS_FINISHED,
-    NOT_SCHEDULED,
-    ON_SALE,
-    REGISTERING
+    HIDE = 'HIDE',
+    DROPS_FINISHED = 'DROPS_FINISHED',
+    NOT_SCHEDULED = 'NOT_SCHEDULED',
+    ON_SALE = 'ON_SALE',
+    REGISTERING = 'REGISTERING'
 }
 
 export class CreateCreatorDto {
     @IsNotEmpty()
-    @IsString()
+    @IsEthereumAddress()
     @Length(42, 42)
     accountAddress: string;
   
@@ -22,27 +22,27 @@ export class CreateCreatorDto {
     @IsEnum(CreatorStatus)
     status: CreatorStatus = CreatorStatus.HIDE;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     shortDescription: string;
   
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     longDescription: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsBase64()
     profileThumbnail: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsBase64()
     backwallThumbnail: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsBase64()
     mainBannerThumbnailPC: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsBase64()
     mainBannerThumbnailMobile: string;
 
