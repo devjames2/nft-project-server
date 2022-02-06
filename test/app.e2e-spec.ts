@@ -100,5 +100,109 @@ describe('AppController (e2e)', () => {
           expect(JSON.parse(res.text)).toHaveProperty('accessToken');
         });
     });
+
+    it('should return 403 /auth (POST) called by invalid accountAddress', async () => {
+      // Given
+      const invalidAccountAddress =
+        '0x5E4E12042cbe7EFCFcCd235265b2a8b190b5Fd6B';
+      const accountAddress = '0x5E4E12042cbe7EFCFcCd235265b2a8b190b5Fd5A';
+      const privateKey =
+        '84aee955437a675c564e0e481efa3fbd1859795161e936d82e75010cc61e0e1d';
+      const URLForGettingNonce = `/auth?accountAddress=${accountAddress}`;
+      const URL = '/auth';
+      const data = {
+        accountAddress: invalidAccountAddress,
+      };
+      const res = await request
+        .default(app.getHttpServer())
+        .get(URLForGettingNonce)
+        .expect(200);
+      const pk = Buffer.from(privateKey, 'hex');
+      const msg = `I am signing my one-time nonce: ${res.body.nonce}`;
+      const msgBufferHex = bufferToHex(Buffer.from(msg, 'utf8'));
+      const sig = personalSign(pk, { data: msgBufferHex });
+
+      // When
+      return await request
+        .default(app.getHttpServer())
+        .post(URL)
+        .send({
+          ...data,
+          signature: sig,
+          nonce: res.body.nonce,
+        })
+        .expect(403)
+        .expect((err, res) => {
+          expect(err.text).toEqual('"Problem with getting user auth info."');
+        });
+    });
+
+    it.todo(
+      'should return 403 when /auth (POST) called with "Problem with signature verification."',
+    );
+
+    // it('should return 403 when /auth (POST) called with matched accountAddress and nonce', async () => {
+    //   // Given
+    //   const accountAddress = '0x5E4E12042cbe7EFCFcCd235265b2a8b190b5Fd5A';
+    //   const privateKey =
+    //     '84aee955437a675c564e0e481efa3fbd1859795161e936d82e75010cc61e0e1d';
+    //   const URLForGettingNonce = `/auth?accountAddress=${accountAddress}`;
+    //   const URL = '/auth';
+    //   const data = {
+    //     accountAddress,
+    //   };
+    //   const res = await request
+    //     .default(app.getHttpServer())
+    //     .get(URLForGettingNonce)
+    //     .expect(200);
+    //   const pk = Buffer.from(privateKey, 'hex');
+    //   const msg = `This is not valid sign message: ${res.body.nonce}`;
+    //   const msgBufferHex = bufferToHex(Buffer.from(msg, 'utf8'));
+    //   const sig = personalSign(pk, { data: msgBufferHex });
+
+    //   // When
+    //   return await request
+    //     .default(app.getHttpServer())
+    //     .post(URL)
+    //     .send({
+    //       accountAddress: '0x5E4E12042cbe7EFCFcCd235265b2a8b190b5Fd5B', // This is not exists.
+    //       signature: sig,
+    //       nonce: res.body.nonce,
+    //     })
+    //     .expect(403)
+    //     .expect((err, res) => {
+    //       expect(err.text).toEqual('"Problem with signature verification."');
+    //     });
+    // });
+
+    it('should return 401 /auth (POST) called by invalid signature', async () => {
+      // Given
+      const accountAddress = '0x5E4E12042cbe7EFCFcCd235265b2a8b190b5Fd5A';
+      const privateKey =
+        '84aee955437a675c564e0e481efa3fbd1859795161e936d82e75010cc61e0e1d';
+      const invalidNonce = 100;
+      const URL = '/auth';
+      const data = {
+        accountAddress,
+      };
+      const pk = Buffer.from(privateKey, 'hex');
+      const msg = `I am signing my one-time nonce: ${invalidNonce}`;
+      const msgBufferHex = bufferToHex(Buffer.from(msg, 'utf8'));
+      const sig = personalSign(pk, { data: msgBufferHex });
+
+      // When
+      return await request
+        .default(app.getHttpServer())
+        .post(URL)
+        .send({
+          ...data,
+          signature: sig,
+          nonce: invalidNonce,
+        })
+        .expect(401)
+        .expect((err, res) => {
+          expect(err.text).toEqual('"Signature verification failed"');
+        });
+    });
   });
 });
