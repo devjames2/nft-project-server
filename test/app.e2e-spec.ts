@@ -207,10 +207,77 @@ describe('AppController (e2e)', () => {
   });
 
   describe('Creators Test', () => {
-    it.todo('should return 201 /creators (POST) called');
-    it.todo(
-      'should return 422 /creators (POST) called when creator already exists',
-    );
+    it('(NFT-130) should return 201 /creators (POST) called', async () => {
+      // Given
+      const URL = '/creators';
+      const createCreatorDto = {
+        accountAddress: '0x5E4E12042cbe7EFCFcCd235265b2a8b190b5Fd5A',
+        nickName: 'TestNickName',
+      };
+
+      // When
+      return await request
+        .default(app.getHttpServer())
+        .post(URL)
+        .send(createCreatorDto)
+        .expect(201)
+        .expect((res) => {
+          expect(res.body).toHaveProperty('createdAt');
+          expect(res.body).toHaveProperty('status');
+          expect(res.body).toHaveProperty('nickName');
+          expect(res.body).toHaveProperty('accountAddress');
+          expect(res.body).toHaveProperty('_id');
+          expect(res.body).toHaveProperty('__v');
+          expect(res.body.status).toEqual('HIDE');
+          expect(res.body.nickName).toEqual(createCreatorDto.nickName);
+          expect(res.body.accountAddress).toEqual(
+            createCreatorDto.accountAddress,
+          );
+        });
+    });
+
+    it('(NFT-130) should return 422 /creators (POST) called when creator already exists', async () => {
+      // Given
+      const URL = '/creators';
+      const duplicatedNickNameCreateCreatorDto = {
+        accountAddress: '0x5E4E12042cbe7EFCFcCd235265b2a8b190b5Fd5B',
+        nickName: 'TestNickName',
+      };
+      const duplicatedAccountAddressCreateCreatorDto = {
+        accountAddress: '0x5E4E12042cbe7EFCFcCd235265b2a8b190b5Fd5A',
+        nickName: 'TestNickName2',
+      };
+
+      // When
+      await request
+        .default(app.getHttpServer())
+        .post(URL)
+        .send(duplicatedNickNameCreateCreatorDto)
+        .expect(422)
+        .expect((err, res) => {
+          expect(JSON.parse(err.text)).toHaveProperty('message');
+          expect(JSON.parse(err.text)).toHaveProperty('error');
+          expect(JSON.parse(err.text).message).toEqual(
+            'Creator already exists',
+          );
+          expect(JSON.parse(err.text).error).toEqual('Unprocessable Entity');
+        });
+
+      await request
+        .default(app.getHttpServer())
+        .post(URL)
+        .send(duplicatedAccountAddressCreateCreatorDto)
+        .expect(422)
+        .expect((err, res) => {
+          expect(JSON.parse(err.text)).toHaveProperty('message');
+          expect(JSON.parse(err.text)).toHaveProperty('error');
+          expect(JSON.parse(err.text).message).toEqual(
+            'Creator already exists',
+          );
+          expect(JSON.parse(err.text).error).toEqual('Unprocessable Entity');
+        });
+    });
+
     it.todo('should return 200 /creators (GET) called');
     it.todo(
       'should return 401 /creators (GET) called when the request is wrong',
