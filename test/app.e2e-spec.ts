@@ -47,15 +47,13 @@ describe('AppController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await app.close();
-  });
-
-  beforeAll(async () => {
     try {
-      await dbConnection.collection('creators').drop();
+      await dbConnection.collection('creators').deleteMany({});
+      await dbConnection.collection('userauthinfos').deleteMany({});
     } catch (error) {
-      //console.log(error);
+      console.log(error);
     }
+    await app.close();
   });
 
   describe('Auth Test', () => {
@@ -225,10 +223,6 @@ describe('AppController (e2e)', () => {
   });
 
   describe('Creators Test', () => {
-    // afterEach(async () => {
-    //   await dbConnection.collection('creators').deleteMany({});
-    // });
-
     it('(NFT-130) should return 201 /creators (POST) called', async () => {
       // Given
       const URL = '/creators';
@@ -304,7 +298,7 @@ describe('AppController (e2e)', () => {
         });
     });
 
-    it('should return 200 /creators (GET) called', async () => {
+    it('(NFT-130) should return 200 /creators (GET) called', async () => {
       // Given
       const URL = '/creators';
       const page = 0;
@@ -328,11 +322,127 @@ describe('AppController (e2e)', () => {
           expect(res.body).toHaveProperty('nextPage');
         });
     });
-    it.todo(
-      'should return 401 /creators (GET) called when the request is wrong',
-    );
-    it.todo('should return 200 /creator/:accountAddress (GET) called');
-    it.todo('should return 200 /creator (PATCH) called');
-    it.todo('should return 200 /creator/:accountAddress (DELETE) called');
+
+    it('(NFT-130) should return 200 /creator/:_id (GET) called', async () => {
+      // Given
+      const URL = '/creators';
+      const res = await request
+        .default(app.getHttpServer())
+        .get(URL)
+        .expect(200);
+      const _id = res.body.docs[0]._id;
+
+      // When
+      await request
+        .default(app.getHttpServer())
+        .get(`${URL}/${_id}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveProperty('_id');
+          expect(res.body).toHaveProperty('createdAt');
+          expect(res.body).toHaveProperty('status');
+          expect(res.body).toHaveProperty('nickName');
+          expect(res.body).toHaveProperty('accountAddress');
+          expect(res.body._id).toEqual(_id);
+        });
+    });
+
+    it('(NFT-130) should return 404 /creator/:_id (PATCH) called with id is not exist', async () => {
+      // Given
+      const URL = '/creators';
+      const invalidId = '61ffcc1aedfd9e0a8cfd8aaa';
+
+      // When
+      await request
+        .default(app.getHttpServer())
+        .get(`${URL}/${invalidId}`)
+        .expect(404)
+        .expect((err, res) => {
+          console.log(err);
+          expect(err.body.message).toEqual('creator not found');
+        });
+    });
+
+    it('(NFT-130) should return 200 /creator (PATCH) called', async () => {
+      // Given
+      const URL = '/creators';
+      const res = await request
+        .default(app.getHttpServer())
+        .get(URL)
+        .expect(200);
+      const _id = res.body.docs[0]._id;
+      const updateCreatorDto = {
+        _id,
+        accountAddress: '0x5E4E12042cbe7EFCFcCd235265b2a8b190b5Fd5A',
+        nickName: 'UpdatedTestNickName',
+      };
+
+      // When
+      await request
+        .default(app.getHttpServer())
+        .patch(URL)
+        .send(updateCreatorDto)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.modifiedCount).toEqual(1);
+          expect(res.body.matchedCount).toEqual(1);
+        });
+    });
+
+    it('(NFT-130) should return 200 /creator (PATCH) called with _id is not exist', async () => {
+      // Given
+      const URL = '/creators';
+      const invalidId = '61ffcc1aedfd9e0a8cfd8aaa';
+      const updateCreatorDto = {
+        _id: invalidId,
+        accountAddress: '0x5E4E12042cbe7EFCFcCd235265b2a8b190b5Fd5A',
+        nickName: 'UpdatedTestNickName',
+      };
+
+      // When
+      await request
+        .default(app.getHttpServer())
+        .patch(URL)
+        .send(updateCreatorDto)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.modifiedCount).toEqual(0);
+          expect(res.body.matchedCount).toEqual(0);
+        });
+    });
+
+    it('(NFT-130) should return 404 /creator/:_id (DELETE) called with _id is not exist', async () => {
+      // Given
+      const URL = '/creators';
+      const invalidId = '61ffcc1aedfd9e0a8cfd8aaa';
+
+      // When
+      await request
+        .default(app.getHttpServer())
+        .patch(`${URL}/${invalidId}`)
+        .expect(404)
+        .expect((err, res) => {
+          expect(err.body.error).toEqual('Not Found');
+        });
+    });
+
+    it('(NFT-130) should return 200 /creator/:_id (DELETE) called', async () => {
+      // Given
+      const URL = '/creators';
+      const res = await request
+        .default(app.getHttpServer())
+        .get(URL)
+        .expect(200);
+      const _id = res.body.docs[0]._id;
+
+      // When
+      await request
+        .default(app.getHttpServer())
+        .delete(`${URL}/${_id}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.text).toEqual(`removes a creator with id : ${_id}`);
+        });
+    });
   });
 });

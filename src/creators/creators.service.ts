@@ -76,9 +76,9 @@ export class CreatorsService {
     const result = await this.creatorsModel.findByIdAndDelete({ _id }).exec();
 
     if (!result) {
-      throw new NotFoundException('drop not found');
+      throw new NotFoundException('creator not found');
     }
 
-    return `removes a ${_id} user`;
+    return `removes a creator with id : ${_id}`;
   }
 }
