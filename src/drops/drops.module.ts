@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { DropsService } from './drops.service';
 import { DropsController } from './drops.controller';
 import { JwtModule } from '@nestjs/jwt';
@@ -17,6 +17,6 @@ import { Drops, DropsSchema } from './schemas/drops.schema';
     ])
   ],
   controllers: [DropsController],
-  providers: [DropsService]
+  providers: [DropsService, Logger]
 })
 export class DropsModule {}
